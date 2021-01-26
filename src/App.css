@@ -1,3 +1,15 @@
+body{
+  background-color: aquamarine;
+}
+.main{
+  background-color: #fff;
+  
+  margin-top: 20px;
+  border-radius: 10px;
+}
+#task-container{
+  padding: 10px 0;
+}
 .App {
   text-align: center;
 }
