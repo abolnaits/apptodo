@@ -22,6 +22,7 @@ class App extends React.Component{
         this.getList = this.fetchTaks.bind(this);
         this.checkChange = this.changeHandler.bind(this);
         this.checkSubmit = this.submitHandler.bind(this);
+        this.editHandler = this.editHandler.bind(this);
     }
 
     //Life cycle methos
@@ -79,17 +80,33 @@ class App extends React.Component{
             this.getList();
             //Actualizo el estado
             this.setState({
-                id : null,
-                title:'',
-                completed:false
+                activeItem:{
+                    id : null,
+                    title:'',
+                    completed:false
+                }
+                
             });
         }).catch(function(error){
             console.log('Erro ==>',error);
         });
 
     }
+
+    editHandler(task){
+        console.log('Edit task==>',task);
+        //Pasamos el contexto
+        console.log('this ==>',this);
+        this.setState({
+            activeItem:task,
+            editing:true
+        });
+        console.log(this.state.activeItem);
+    }
+
     render(){
         var tasks = this.state.todoList;
+        var that = this;
         return(
             <div id="task-container" className="container">
                 <h1 className="text-center">Todo Task List</h1>
@@ -97,7 +114,7 @@ class App extends React.Component{
                 <form id="form" onSubmit={this.checkSubmit}>
                         <div className="form-group">
                             <label htmlFor="title">Title</label>
-                            <input type="text" className="form-control" id="title" aria-describedby="titleHelp" name="title"  onChange={this.checkChange}/>
+                            <input type="text" className="form-control" id="title" aria-describedby="titleHelp" name="title"  onChange={this.checkChange} value={this.state.activeItem.title}/>
                             <small id="titleHelp" className="form-text text-muted">Add the title for the task.</small>
                             <button type="submit" className="btn btn-primary">Add</button>
                         </div>
@@ -112,7 +129,9 @@ class App extends React.Component{
                                     <span className="task-title">{task.title}</span>    
                                 </div>
                                 <div className="task-info two">
-                                    <button className="btn btn-warning edit"> Edit</button>    
+                                    <button className="btn btn-warning edit" onClick={function(){
+                                        return that.editHandler(task);
+                                    }}> Edit</button>    
                                 </div>
                                 <div className="task-info three">
                                     <button className="btn btn-danger delete"> Delete</button>    
