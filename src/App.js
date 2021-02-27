@@ -24,6 +24,7 @@ class App extends React.Component{
         this.checkSubmit = this.submitHandler.bind(this);
         this.editHandler = this.editHandler.bind(this);
         this.deleteHandler = this.deleteHandler.bind(this);
+        this.completeHandler = this.completeHandler.bind(this);
     }
 
     //Life cycle methos
