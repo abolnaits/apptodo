@@ -22,7 +22,7 @@ class App extends React.Component{
         this.getList = this.fetchTaks.bind(this);
         this.checkChange = this.changeHandler.bind(this);
         this.checkSubmit = this.submitHandler.bind(this);
-        this.editHandler = this.editHandler.bind(this);
+        //this.editHandler = this.editHandler.bind(this);
     }
 
     //Life cycle methos
@@ -50,11 +50,12 @@ class App extends React.Component{
         var value = e.target.value;
         console.log('Name ==>',name);
         console.log('Value ==>',value);
+        console.log('Active ==>',this.state.activeItem);
         //Actualizo el estado
         this.setState({
             activeItem:{
-                //...this.state.activeItem,
-                id:null,
+                id: this.state.activeItem.id,
+                //id:null,
                 title:value,
                 completed:false
             }
@@ -67,6 +68,17 @@ class App extends React.Component{
         console.log('Item ==>',this.state.activeItem);
         //Send the URL
         var url = 'http://localhost:8000/api/task-create/';
+        //Check if it we are adding or updating
+        if(this.state.editing){
+            url = 'http://localhost:8000/api/task-update/'+this.state.activeItem.id+'/'
+            //Update editing
+            
+            this.setState({
+                editing:false
+            });
+            
+        }
+        //alert(url);
         fetch(url,{
             method:'POST',
             headers:{
@@ -93,10 +105,12 @@ class App extends React.Component{
 
     }
 
+    //Edit an item 
+    //Take a parameters , must use an arrow function in the call
     editHandler(task){
         console.log('Edit task==>',task);
         //Pasamos el contexto
-        console.log('this ==>',this);
+        //console.log('this ==>',this);
         this.setState({
             activeItem:task,
             editing:true
@@ -129,9 +143,7 @@ class App extends React.Component{
                                     <span className="task-title">{task.title}</span>    
                                 </div>
                                 <div className="task-info two">
-                                    <button className="btn btn-warning edit" onClick={function(){
-                                        return that.editHandler(task);
-                                    }}> Edit</button>    
+                                    <button className="btn btn-warning edit" onClick={()=>that.editHandler(task)}> Edit</button>    
                                 </div>
                                 <div className="task-info three">
                                     <button className="btn btn-danger delete"> Delete</button>    
