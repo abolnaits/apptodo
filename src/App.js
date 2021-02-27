@@ -22,7 +22,8 @@ class App extends React.Component{
         this.getList = this.fetchTaks.bind(this);
         this.checkChange = this.changeHandler.bind(this);
         this.checkSubmit = this.submitHandler.bind(this);
-        //this.editHandler = this.editHandler.bind(this);
+        this.editHandler = this.editHandler.bind(this);
+        this.deleteHandler = this.deleteHandler.bind(this);
     }
 
     //Life cycle methos
@@ -44,6 +45,7 @@ class App extends React.Component{
         });
     }
 
+    //This is used when the user clicks on Edit btn
     changeHandler(e){
         console.log(e);
         var name = e.target.name;
@@ -61,6 +63,23 @@ class App extends React.Component{
             }
         });
         
+    }
+
+    //This is call when the user clicks on Delete btn
+    deleteHandler(task){
+        console.log('Delete Handler ==>');
+        console.log(task);
+        console.log('This ==>',this);
+        var url = 'http://localhost:8000/api/task-delete/'+task.id+'/';
+        fetch(url,{
+            method:'DELETE',
+            headers:{
+                'Content-type':'application/json'
+            }
+        }).then((res)=>{
+            console.log('Resp ==>',res);
+            this.getList();
+        });
     }
 
     submitHandler(e){
@@ -118,6 +137,27 @@ class App extends React.Component{
         console.log(this.state.activeItem);
     }
 
+    completeHandler(task){
+        console.log('Complete handler ==>');
+        console.log(task);
+        var completed = !task.completed;
+        task.completed = completed;
+        var url = 'http://localhost:8000/api/task-update/'+task.id+'/';
+
+        fetch(url,{
+            method:'POST',
+            headers:{
+                'Content-type':'application/json'
+            },
+            body:JSON.stringify(task)
+        }).then((resp)=>{
+            console.log(resp);
+            this.getList();
+        }).catch((e)=>{
+            console.log(e);
+        });
+    }
+
     render(){
         var tasks = this.state.todoList;
         var that = this;
@@ -136,17 +176,24 @@ class App extends React.Component{
                 </div>
                 
                 <div id="list-wrapper">
+                    {/* This is undefined because it is a normal func */}
                     {tasks.map(function(task,index){
+                        var clase = 'not-completed';
+                        if(task.completed == true){
+                            clase = 'completed';
+                        }
                         return(
                             <div key={index} className="task-wrapper" id={"data-row-"+index}>
                                 <div className="task-info one">
-                                    <span className="task-title">{task.title}</span>    
+                                <span className={"task-title "+clase} onClick={()=>that.completeHandler(task)}>{task.title}</span>    
                                 </div>
                                 <div className="task-info two">
                                     <button className="btn btn-warning edit" onClick={()=>that.editHandler(task)}> Edit</button>    
                                 </div>
                                 <div className="task-info three">
-                                    <button className="btn btn-danger delete"> Delete</button>    
+                                    <button className="btn btn-danger delete" onClick={function(){
+                                        return that.deleteHandler(task);
+                                    }}> Delete</button>    
                                 </div>  
                             </div>
 
